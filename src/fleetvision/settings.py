@@ -106,9 +106,20 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
+# src/fleetvision/settings.py
+
+# ... (procure por estas linhas existentes)
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# ⚠️ ADICIONE ISTO AQUI:
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# ... (resto do arquivo)
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # DRF Config (Consolidado)
