@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>FleetVision - Monitoramento Ao Vivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; }
+        .vehicle-label { background: rgba(255,255,255,0.8); padding: 2px 5px; border-radius: 4px; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid p-0">
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // 1. Inicializa o Mapa
+    const map = L.map('map').setView([-23.5505, -46.6333], 13); // Default SP (ajustar depois)
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    const vehicleMarkers = {};
+
+    // Ícone simples (pode ser customizado depois para rotacionar)
+    function getIcon(ignition) {
+        const color = ignition ? 'green' : 'red';
+        return L.divIcon({
+            className: 'custom-icon',
+            html: `<div style="background-color: ${color}; width: 15px; height: 15px; border-radius: 50%; border: 2px solid white;"></div>`
+        });
+    }
+
+    // 2. Conecta no WebSocket
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const socket = new WebSocket(protocol + '//' + window.location.host + '/ws/fleet/live/');
+
+    socket.onopen = function(e) {
+        console.log("🟢 Conectado ao Rastreamento em Tempo Real");
+    };
+
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'vehicle_update') {
+            const v = data.data;
+            updateVehicleOnMap(v);
+        }
+    };
+
+    socket.onclose = function(e) {
+        console.error("🔴 Desconectado do servidor");
+    };
+
+    // 3. Atualiza Marcador no Mapa
+    function updateVehicleOnMap(v) {
+        const { id, lat, lng, name, speed, ignition } = v;
+
+        if (vehicleMarkers[id]) {
+            // Atualiza posição
+            const marker = vehicleMarkers[id];
+            marker.setLatLng([lat, lng]);
+            marker.setIcon(getIcon(ignition));
+            marker.bindPopup(`<b>${name}</b><br>Vel: ${speed} km/h<br>Ignição: ${ignition ? 'ON' : 'OFF'}`);
+        } else {
+            // Cria novo marcador
+            const marker = L.marker([lat, lng], { icon: getIcon(ignition) })
+                .addTo(map)
+                .bindPopup(`<b>${name}</b><br>Vel: ${speed} km/h<br>Ignição: ${ignition ? 'ON' : 'OFF'}`);
+            
+            vehicleMarkers[id] = marker;
+            
+            // Centraliza o mapa no primeiro veículo recebido (opcional)
+            // map.setView([lat, lng]); 
+        }
+    }
+</script>
+</body>
+</html>

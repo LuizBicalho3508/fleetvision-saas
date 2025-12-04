@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold text-dark">Visão Geral da Frota</h2>
+        <p class="text-muted">Resumo operacional de {{ request.tenant.name }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card-counter border-start border-4 border-primary">
+            <i class="fas fa-truck text-primary"></i>
+            <span class="count-numbers">{{ total_vehicles }}</span>
+            <span class="count-name">Veículos</span>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-counter border-start border-4 border-success">
+            <i class="fas fa-check-circle text-success"></i>
+            <span class="count-numbers">{{ active_vehicles }}</span>
+            <span class="count-name">Em Operação</span>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-counter border-start border-4 border-danger">
+            <i class="fas fa-exclamation-triangle text-danger"></i>
+            <span class="count-numbers">{{ alerts_today }}</span>
+            <span class="count-name">Alertas Hoje</span>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-counter border-start border-4 border-info">
+            <i class="fas fa-tools text-info"></i>
+            <span class="count-numbers">{{ maintenance_pending }}</span>
+            <span class="count-name">Manut. Pendente</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-history me-2"></i>Últimas Atividades</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Veículo</th>
+                                <th>Evento</th>
+                                <th>Horário</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="fw-bold">ABC-1234</span></td>
+                                <td>Ignição Ligada</td>
+                                <td>10:45</td>
+                                <td><span class="badge bg-success">Online</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="fw-bold">XYZ-9876</span></td>
+                                <td>Excesso de Velocidade</td>
+                                <td>10:42</td>
+                                <td><span class="badge bg-danger">Alerta</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="fw-bold">AAA-0000</span></td>
+                                <td>Chegada ao Destino</td>
+                                <td>10:30</td>
+                                <td><span class="badge bg-primary">Logística</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2"></i>Status da Frota</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-center align-items-center" style="height: 200px;">
+                    <p class="text-muted">Gráfico virá aqui (Chart.js)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

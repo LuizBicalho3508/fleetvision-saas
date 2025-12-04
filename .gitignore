@@ -1,0 +1,10 @@
+.env
+postgres_data/
+static_volume/
+data/certbot/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+.idea/
+.vscode/

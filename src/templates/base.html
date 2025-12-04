@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FleetVision{% endblock %} | Gestão de Frotas</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div id="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            {% if request.tenant and request.tenant.logo_url %}
+                <img src="{{ request.tenant.logo_url }}" alt="Logo" class="img-fluid" style="max-height: 50px;">
+            {% else %}
+                <h3>FleetVision</h3>
+            {% endif %}
+            <small class="text-muted d-block mt-2">{{ request.tenant.name|default:"Administração Global" }}</small>
+        </div>
+
+        <ul class="list-unstyled components">
+            <li>
+                <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'live-map' %}" class="{% if request.resolver_match.url_name == 'live-map' %}active{% endif %}">
+                    <i class="fas fa-map-marked-alt"></i> Mapa em Tempo Real
+                </a>
+            </li>
+            <li class="border-top my-2 border-secondary"></li>
+            <li>
+                <a href="{% url 'vehicle-list' %}" class="{% if 'vehicles' in request.path %}active{% endif %}">
+                    <i class="fas fa-truck"></i> Veículos
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-users"></i> Motoristas
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-tools"></i> Manutenção
+                </a>
+            </li>
+            <li class="border-top my-2 border-secondary"></li>
+            <li>
+                <a href="{% url 'route-list' %}" class="{% if 'routes' in request.path %}active{% endif %}">
+                    <i class="fas fa-route"></i> Roteirização
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'financial-list' %}" class="{% if 'financial' in request.path %}active{% endif %}">
+                    <i class="fas fa-file-invoice-dollar"></i> Financeiro
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="content">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container-fluid">
+                <button type="button" id="sidebarCollapse" class="btn btn-outline-primary">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="ms-auto d-flex align-items-center">
+                    <span class="me-3 fw-bold text-secondary">{{ request.user.get_full_name|default:request.user.username }}</span>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/admin/logout/">Sair</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid p-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

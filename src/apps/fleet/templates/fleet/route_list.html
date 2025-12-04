@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Roteirização{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Rotas de Entrega</h1>
+    <a href="{% url 'route-create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Nova Rota</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Rota</th>
+                        <th>Data</th>
+                        <th>Veículo / Motorista</th>
+                        <th>Status</th>
+                        <th>Km Previsto</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for route in routes %}
+                    <tr>
+                        <td class="fw-bold">{{ route.name }}</td>
+                        <td>{{ route.date|date:"d/m/Y" }}</td>
+                        <td>
+                            <div>{{ route.vehicle.name|default:"-" }}</div>
+                            <small class="text-muted">{{ route.driver.user.get_full_name|default:"-" }}</small>
+                        </td>
+                        <td>
+                            {% if route.status == 'COMPLETED' %}
+                                <span class="badge bg-success">Concluída</span>
+                            {% elif route.status == 'IN_PROGRESS' %}
+                                <span class="badge bg-primary">Em Andamento</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ route.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ route.total_km_predicted }} km</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" title="Otimizar (Em breve via API)"><i class="fas fa-magic"></i></button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="text-center py-4">Nenhuma rota encontrada.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

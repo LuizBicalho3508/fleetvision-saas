@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Financeiro{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Gestão Financeira</h1>
+    <div>
+        <a href="{% url 'contract-create' %}" class="btn btn-success me-2"><i class="fas fa-file-contract"></i> Novo Contrato</a>
+        <a href="{% url 'expense-create' %}" class="btn btn-danger"><i class="fas fa-minus-circle"></i> Nova Despesa</a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Receita Recorrente (Mensal)</h6>
+                <h3 class="mb-0">R$ {{ total_revenue|floatform:2 }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-danger text-white shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title">Despesas Pendentes</h6>
+                <h3 class="mb-0">R$ {{ total_expenses|floatform:2 }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-success">Contratos Ativos</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Cliente</th><th>Venc.</th><th class="text-end">Valor</th></tr></thead>
+                    <tbody>
+                        {% for c in contracts %}
+                        <tr>
+                            <td>{{ c.customer_name }}</td>
+                            <td>Dia {{ c.due_day }}</td>
+                            <td class="text-end">R$ {{ c.value }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center py-3">Sem contratos.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 text-danger">Últimas Despesas</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Descrição</th><th>Vencimento</th><th class="text-end">Valor</th></tr></thead>
+                    <tbody>
+                        {% for e in expenses %}
+                        <tr>
+                            <td>
+                                {{ e.description }}
+                                {% if e.is_paid %}<span class="badge bg-success ms-1">Pago</span>{% endif %}
+                            </td>
+                            <td>{{ e.due_date|date:"d/m" }}</td>
+                            <td class="text-end">R$ {{ e.amount }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center py-3">Sem despesas recentes.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

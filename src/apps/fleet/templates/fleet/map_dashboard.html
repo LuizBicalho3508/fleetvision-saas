@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Monitoramento em Tempo Real{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Ajuste para o mapa ocupar a altura total disponível descontando a navbar e padding */
+    #map-wrapper {
+        position: relative;
+        height: calc(100vh - 110px); /* Ajuste conforme altura do navbar */
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+    #map-container {
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+    
+    /* Legenda Flutuante */
+    .map-legend {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1000;
+        font-size: 0.8rem;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Mapa Ao Vivo</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload()">Recarregar</button>
+        </div>
+    </div>
+</div>
+
+<div id="map-wrapper" class="shadow-sm">
+    <div id="map-container"></div>
+    
+    <div class="map-legend">
+        <div class="mb-1"><span class="legend-dot bg-success"></span> Em Movimento</div>
+        <div class="mb-1"><span class="legend-dot bg-warning"></span> Parado (Ignição On)</div>
+        <div><span class="legend-dot bg-danger"></span> Desligado / Offline</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/realtime_map.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Editar{% else %}Novo{% endif %} Veículo{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0">{% if object %}Editar{% else %}Cadastrar{% endif %} Veículo</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nome / Identificação</label>
+                            {{ form.name }}
+                            {{ form.name.errors }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Placa</label>
+                            {{ form.plate }}
+                            {{ form.plate.errors }}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label">Modelo</label>
+                            {{ form.model }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Ano</label>
+                            {{ form.year }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Combustível</label>
+                            {{ form.fuel_type }}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">ID do Dispositivo (Traccar)</label>
+                            {{ form.traccar_device_id }}
+                            <div class="form-text">ID numérico do dispositivo configurado no servidor Traccar.</div>
+                            {{ form.traccar_device_id.errors }}
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{% url 'vehicle-list' %}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Salvar Veículo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

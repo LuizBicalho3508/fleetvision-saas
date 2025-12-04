@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Veículos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Minha Frota</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'vehicle-create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Novo Veículo
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome / Placa</th>
+                        <th>Modelo</th>
+                        <th>Status</th>
+                        <th>Última Atualização</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vehicle in vehicles %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold">{{ vehicle.name }}</div>
+                            <small class="text-muted">{{ vehicle.plate|default:"Sem Placa" }}</small>
+                        </td>
+                        <td>{{ vehicle.model|default:"-" }}</td>
+                        <td>
+                            {% if vehicle.ignition %}
+                                <span class="badge bg-success">Ligado</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Desligado</span>
+                            {% endif %}
+                            <small class="d-block text-muted">{{ vehicle.last_speed|floatform:0 }} km/h</small>
+                        </td>
+                        <td>
+                            {{ vehicle.last_update|date:"d/m/Y H:i"|default:"Nunca" }}
+                        </td>
+                        <td>
+                            <a href="{% url 'vehicle-update' vehicle.id %}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'vehicle-delete' vehicle.id %}" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            Nenhum veículo cadastrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
