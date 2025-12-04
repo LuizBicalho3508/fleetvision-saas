@@ -11,17 +11,20 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
-DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = ['fleetvision.com.br', 'www.fleetvision.com.br', 'localhost', '127.0.0.1', '104.251.211.55']
+DEBUG = env.bool('DEBUG', default=False)
 
-# Adicione isso se não tiver:
+# Segurança de Hosts e CSRF (Produção)
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 CSRF_TRUSTED_ORIGINS = [
     'https://fleetvision.com.br',
     'https://www.fleetvision.com.br',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
+
 # Application definition
 INSTALLED_APPS = [
-    'daphne', # ASGI Server (Websockets)
+    'daphne', # Websockets (Primeiro)
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apps.tenants.middleware.TenantMiddleware', # Middleware SaaS
+    'apps.tenants.middleware.TenantMiddleware',
 ]
 
 ROOT_URLCONF = 'fleetvision.urls'
@@ -59,8 +62,7 @@ ROOT_URLCONF = 'fleetvision.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # ALTERAÇÃO AQUI: Apontando para a pasta templates na raiz de src/
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], 
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Templates Globais
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,23 +108,18 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
-# src/fleetvision/settings.py
-
-# ... (procure por estas linhas existentes)
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# ⚠️ ADICIONE ISTO AQUI:
+# Correção do Erro 500 (Arquivos do Frontend)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# ... (resto do arquivo)
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# DRF Config (Consolidado)
+# DRF Config
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -152,7 +149,7 @@ TRACCAR_BASE_URL = env('TRACCAR_BASE_URL', default='http://localhost:8082')
 TRACCAR_USER = env('TRACCAR_USER', default='admin')
 TRACCAR_PASSWORD = env('TRACCAR_PASSWORD', default='admin')
 
-# Login/Logout Redirects (Correção Fase 4)
+# Login Redirects
 LOGIN_URL = '/admin/login/'
-LOGIN_REDIRECT_URL = '/api/v1/map/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/admin/login/'
