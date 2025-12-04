@@ -12,8 +12,13 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
 
 SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
 DEBUG = env.bool('DEBUG', default=True)
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = ['fleetvision.com.br', 'www.fleetvision.com.br', 'localhost', '127.0.0.1', '104.251.211.55']
 
+# Adicione isso se não tiver:
+CSRF_TRUSTED_ORIGINS = [
+    'https://fleetvision.com.br',
+    'https://www.fleetvision.com.br',
+]
 # Application definition
 INSTALLED_APPS = [
     'daphne', # ASGI Server (Websockets)

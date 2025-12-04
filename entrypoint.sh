@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Verifica se as variáveis de banco estão definidas, senão usa defaults
+# Verifica se as variáveis de banco estão definidas
 DB_HOST=${DB_HOST:-db}
 DB_PORT=${DB_PORT:-5432}
 
 echo "Aguardando PostgreSQL em $DB_HOST:$DB_PORT..."
 
-# Loop usando netcat (nc) para verificar se a porta está aberta
+# Loop para verificar se o banco está pronto
 while ! nc -z $DB_HOST $DB_PORT; do
   sleep 1
 done
@@ -26,6 +26,7 @@ if [ "$DEBUG" = "True" ]; then
     echo "Iniciando servidor de desenvolvimento..."
     exec python manage.py runserver 0.0.0.0:8000
 else
-    echo "Iniciando Gunicorn..."
-    exec gunicorn fleetvision.wsgi:application --bind 0.0.0.0:8000
+    echo "Iniciando Daphne (Produção ASGI)..."
+    # IMPORTANTE: Usando Daphne na porta 8000
+    exec daphne -b 0.0.0.0 -p 8000 fleetvision.asgi:application
 fi
